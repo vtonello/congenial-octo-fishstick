@@ -1,0 +1,31 @@
+services:
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/var/www/html
+    ports:
+      - "9080:8000"
+    depends_on:
+      - mariadb
+    environment:
+      DB_HOST: mariadb
+      DB_NAME: api_db
+      DB_USER: wbusr
+      DB_PASS: qwerty123
+    command: php -S 0.0.0.0:8000 -t /var/www/html
+
+  mariadb:
+    image: mariadb:10.6
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: api_db
+      MYSQL_USER: wbusr
+      MYSQL_PASSWORD: qwerty123
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  mariadb_data:
